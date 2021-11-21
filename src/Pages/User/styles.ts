@@ -7,5 +7,11 @@ export const useStyles = makeStyles(() => ({
     screen: {
         backgroundColor: '#efefef',
         height: '90vh',
-    }
+    },
+    howManyItems:{
+        borderRadius: '50%',
+        backgroundColor: '#3f51b5',
+        padding: '0.5rem 0.9rem',
+        color: 'white',
+    },
 }))

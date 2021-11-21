@@ -11,5 +11,5 @@ export const useStyles = makeStyles(() => ({
         justifyContent: 'space-between', 
         display: 'flex', 
         gap:16,
-    }
+    },
 }))

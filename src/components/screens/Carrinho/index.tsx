@@ -6,14 +6,19 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import { useStyles } from './styles';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { Box, Grid, Typography } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { useCheckout } from '../../../context/checkout';
+import { useIncrementProducts } from '../../../context/IncrementProducts';
+import AddCircle from '@material-ui/icons/AddCircle';
+import RemoveCircle from '@material-ui/icons/RemoveCircle';
+import Icon from '@material-ui/core/Icon';
 
 interface ProductProps {
     id: number;
-    product: string;
+    name: string;
     description: string;
     price: number;
     quantity: number;
@@ -21,38 +26,22 @@ interface ProductProps {
 
 export function Carrinho() {
     const classes = useStyles();
+    const { listCheckoutProducts, setListCheckoutProducts, total, handleDelete } = useCheckout();
+    const { handleChangeQuantity } = useIncrementProducts();
     const [name, setName] = useState('');
-    const [error, setError] = useState({error:false, message:''});
-    const [checkout, setCheckout] = useState<ProductProps[]>([]);
+    const [error, setError] = useState({ error: false, message: '' });
 
-    console.log(checkout);
-    const subTotal = checkout.map(p => p.quantity > 1 ? p.price * p.quantity : p.price * 1)
-    const total = subTotal.reduce((acc, sum) => acc + sum, 0)
-
-    function handleDelete(id: number){
-        const newProducts = [...checkout];
-        const filter = newProducts.filter(p => p.id !== id)
-        setCheckout(filter)
-        localStorage.setItem('checkout', JSON.stringify(filter))
-    }
-
-    function buyProduct(){
+    function buyProduct() {
         if (name.trim() !== '') {
-            localStorage.setItem('buyProduct', JSON.stringify(checkout))
-            setCheckout([])
+            localStorage.setItem('buyProduct', JSON.stringify(listCheckoutProducts))
+            setListCheckoutProducts([])
             localStorage.removeItem('checkout')
-            window.location.href='/';
+            window.location.href = '/';
         } else {
-            setError({error:true, message: 'É preciso preencer seu nome!'})
+            setError({ error: true, message: 'É preciso preencer seu nome!' })
         }
     }
-    useEffect(() => {
-        const request = localStorage.getItem('checkout')
-        if (request) {
-            const parse = JSON.parse(request)
-            setCheckout(parse)
-        }
-    }, [])
+
     return (
         <>
             <Paper className={classes.paper}>
@@ -83,25 +72,38 @@ export function Carrinho() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {checkout.map(product => (
-                            <TableRow key={product.id}>
-                                <TableCell align="center">{product.quantity ? product.quantity : 1}</TableCell>
-                                <TableCell component="th" scope="row">
-                                    {product.product}
-                                </TableCell>
-                                <TableCell align="left">{product.description}</TableCell>
-                                <TableCell align="left">{product.price}</TableCell>
-                                <TableCell className={classes.action}>
-                                    <Button variant="outlined" onClick={() => handleDelete(product.id)}>
-                                        <DeleteIcon />
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                        {listCheckoutProducts !== undefined &&
+                            listCheckoutProducts.map((product: ProductProps) => (
+                                <TableRow key={product.id}>
+                                    <TableCell align="center">
+                                        <Box display="flex" style={{ gap: 16 }} justifyContent="center" alignItems="center">
+                                            <Button onClick={() => handleChangeQuantity(product.id, 'remove')} disabled={product.quantity < 2 && true} className={classes.buttonQuantity}>
+                                                <RemoveCircle color={product.quantity < 2 ? 'disabled' : 'error'} />
+                                            </Button>
+                                            {product.quantity}
+                                            <Button onClick={() => handleChangeQuantity(product.id, 'add')}  className={classes.buttonQuantity}>
+                                                <AddCircle color='primary' />
+                                            </Button>
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell component="th" scope="row">
+                                        {product.name}
+                                    </TableCell>
+                                    <TableCell align="left">{product.description}</TableCell>
+                                    <TableCell align="left">{product.price}</TableCell>
+                                    <TableCell className={classes.action}>
+                                        <Button variant="outlined"
+                                            onClick={() => handleDelete(product.id)}
+                                        >
+                                            <DeleteIcon />
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
                         <TableRow>
-                            <TableCell/>
-                            <TableCell/>
-                            <TableCell/>
+                            <TableCell />
+                            <TableCell />
+                            <TableCell />
                             <TableCell className={classes.price}>R${total}</TableCell>
                         </TableRow>
                     </TableBody>
@@ -111,7 +113,7 @@ export function Carrinho() {
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={buyProduct}
+                // onClick={buyProduct}
                 >Finalizar Compra</Button>
             </Box>
         </>

@@ -28,7 +28,6 @@ export function History() {
             setHistory(parse)
         }
     }, [])
-    console.log(history)
     return (
         <>
             <Paper className={classes.paper}>

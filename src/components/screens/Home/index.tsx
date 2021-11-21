@@ -12,51 +12,29 @@ import TextField from '@material-ui/core/TextField';
 import { Grid, Typography } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import { useCheckout } from '../../../context/checkout';
+import { useIncrementProducts } from '../../../context/IncrementProducts';
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 interface ProductProps {
     quantity: number;
     id: number;
-    product: string;
+    name: string;
     description: string;
     price: number;
+    selected: boolean;
 }
 
 export function Home() {
     const classes = useStyles();
-    const [products, setProducts] = useState<ProductProps[]>([]);
-    const [checkout, setCheckout] = useState<ProductProps[]>([]);
-
-    function handleChangeQuantity(id: number, quantity: number){
-        const newProducts = [...products];
-        const filter = newProducts.map(p => p.id === id ? {...p, quantity} : {...p});
-        setProducts(filter)
-    }
-    function SaveData(listProduct: ProductProps[]){
-        setCheckout(listProduct)
-        localStorage.setItem('checkout', JSON.stringify(listProduct))
-    }
-
-    function handleAddProductCheckout(id: number){
-        const newCheckout = [...products];
-        const filter = newCheckout.filter(p => p.id === id)
-        const listProduct = [...checkout, ...filter] 
-        SaveData(listProduct)
-    }
-    
-    useEffect(() => {
-        const request = localStorage.getItem('products')
-        if (request) {
-            const parse = JSON.parse(request)
-            setProducts(parse)
-        }
-    }, [])
-    useEffect(() => {
-        const request = localStorage.getItem('checkout')
-        if (request) {
-            const parse = JSON.parse(request)
-            setCheckout(parse)
-        }
-    }, [])
+    const [search, setSearch] = useState('');
+    const {
+        listProducts,
+        handleChangeQuantity,
+        handleAddProductCheckout
+    } = useIncrementProducts();
+    const filterProducts = listProducts.filter((p:any) => p.name.toLowerCase().includes(search));
     return (
         <>
             <Paper className={classes.paper}>
@@ -68,6 +46,8 @@ export function Home() {
                         <TextField
                             variant="outlined"
                             placeholder="Pesquisar produtos"
+                            value={search}
+                            onChange={(e: any) => setSearch(e.target.value)}
                             InputProps={{
                                 endAdornment: <InputAdornment position="end"><SearchIcon /></InputAdornment>,
                             }}
@@ -83,29 +63,21 @@ export function Home() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {products.map(product => (
-                            <TableRow key={product.id}>
-                                <TableCell component="th" scope="row">
-                                    {product.product}
-                                </TableCell>
-                                <TableCell align="left">{product.description}</TableCell>
-                                <TableCell className={classes.action}>
-                                    <TextField
-                                        id="outlined-adornment-amount"
-                                        // className={classNames)}
-                                        type="number"
-                                        variant="outlined"
-                                        placeholder="Quantidade"
-                                        value={product.quantity ? product.quantity : 1}
-                                        onChange={(e:any) => handleChangeQuantity(product.id, e.target.value)}
-                                    />
-
-                                    <Button variant="outlined" color="primary" onClick={() => handleAddProductCheckout(product.id)}>
-                                        <AddIcon />
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                        {listProducts !== undefined &&
+                            filterProducts.map((product: ProductProps) => (
+                                <TableRow key={product.id}>
+                                    <TableCell component="th" scope="row">
+                                        {product.name}
+                                    </TableCell>
+                                    <TableCell align="left">{product.description}</TableCell>
+                                    <TableCell className={classes.action}>
+                                        <Button disabled={product.selected} variant="outlined" color="primary" onClick={() => handleAddProductCheckout(product.id)}>
+                                            <AddIcon />
+                                            1
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
                     </TableBody>
                 </Table>
             </Paper>

@@ -6,9 +6,12 @@ import DraftsIcon from '@material-ui/icons/Drafts';
 import { useStyles } from "./styles";
 import { Home } from "../../components/screens/Home";
 import { Carrinho } from "../../components/screens/Carrinho";
+import { useIncrementProducts } from "../../context/IncrementProducts";
+import { useCheckout } from "../../context/checkout";
 
 export function UserPage() {
     const [value, setValue] = useState(0);
+    const { listCheckoutProducts } = useCheckout()
     const classes = useStyles();
     return (
         <>
@@ -27,6 +30,9 @@ export function UserPage() {
                                 <DraftsIcon />
                             </ListItemIcon>
                             <ListItemText primary="Carrinho" />
+                            <span className={classes.howManyItems}>
+                                {listCheckoutProducts[0]?.name !== '' ? listCheckoutProducts.length : ''}
+                            </span>
                         </ListItem>
                     </List>
                 </Grid>

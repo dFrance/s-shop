@@ -1,6 +1,7 @@
 import { AdminPage } from './Pages/Admin';
 import { UserPage } from './Pages/User';
 import {BrowserRouter, Route} from 'react-router-dom'
+import { ToastContainer } from 'react-toastify';
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <AdminPage />
         </Route>
       </BrowserRouter>
+      <ToastContainer autoClose={3000} />
     </div>
   );
 }

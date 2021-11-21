@@ -6,6 +6,6 @@ export const useStyles = makeStyles(() => ({
     },
     screen: {
         backgroundColor: '#efefef',
-        height: '90vh',
+        height: '94.5vh',
     }
 }))

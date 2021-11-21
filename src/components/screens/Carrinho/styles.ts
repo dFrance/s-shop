@@ -8,9 +8,9 @@ export const useStyles = makeStyles(() => ({
         padding: '16px 16px 0 16px',
     },
     action: {
-        justifyContent: 'space-between', 
-        display: 'flex', 
-        gap:16,
+        justifyContent: 'space-between',
+        display: 'flex',
+        gap: 16,
     },
     price: {
         height: 30,
@@ -18,4 +18,9 @@ export const useStyles = makeStyles(() => ({
         display: 'flex',
         justifyContent: 'flex-end',
     },
+    buttonQuantity: {
+        borderRadius: '50%',
+        padding: '8px',
+        minWidth: '40px',
+},
 }))
