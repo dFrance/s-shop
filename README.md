@@ -1,6 +1,6 @@
 # Uma aplicação para cadastro e compra de produtos
 
-A aplicação se encontra no link https://sshopseventh.herokuapp.com/;
+A aplicação se encontra no link https://sshopdifrance.herokuapp.com/;
 
 As rotas são '/' e '/admin'.
 
