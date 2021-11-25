@@ -4,9 +4,8 @@ import { Grid, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/c
 import InboxIcon from '@material-ui/icons/Inbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import { useStyles } from "./styles";
-import { Home } from "../../components/screens/Home";
-import { Carrinho } from "../../components/screens/Carrinho";
-import { useIncrementProducts } from "../../context/IncrementProducts";
+// import { Home } from "../../components/screens/Home";
+import { Cart, Home } from "../../components/screens/";
 import { useCheckout } from "../../context/checkout";
 
 export function UserPage() {
@@ -39,7 +38,7 @@ export function UserPage() {
                 <Grid item xs={9} className={classes.screen}>
                     {value === 0
                         ? <Home />
-                        : <Carrinho />}
+                        : <Cart />}
                 </Grid>
 
             </Grid>

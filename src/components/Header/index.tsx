@@ -4,18 +4,12 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import { useStyles } from '../../components/Header/styles';
-import { Box, Button, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Box, Drawer, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import { useState } from 'react';
-import Icon from '@material-ui/icons';
 import SecurityIcon from '@material-ui/icons/Security';
 import HomeIcon from '@material-ui/icons/Home';
 import { useHistory } from 'react-router';
 
-type DrawerItemsProps = {
-    text: string,
-    link: string,
-    index: string,
-}
 export function Header() {
     const classes = useStyles();
     const history = useHistory();

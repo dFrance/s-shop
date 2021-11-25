@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 
 
 export const CheckoutContext = createContext();
@@ -11,7 +11,7 @@ export const CheckoutProvider = ({children}) => {
     
     function handleDelete(id){
         const newProducts = [...listCheckoutProducts];
-        const filter = newProducts.filter(p => p.id !== id)
+        const filter = newProducts.filter(p => p._id !== id)
         setListCheckoutProducts(filter)
         localStorage.setItem('checkout', JSON.stringify(filter))
     }

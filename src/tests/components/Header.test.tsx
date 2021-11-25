@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
-import App from './App';
+import {Header} from '../../components/Header';
 
-test('renders learn react link', () => {
-  render(<App />);
+it('logo is render', () => {
+  render(<Header />);
   const linkElement = screen.getByText('S-Shop');
   expect(linkElement).toBeInTheDocument();
 });

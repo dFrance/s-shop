@@ -6,7 +6,6 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import { useStyles } from './styles';
-import { FormEvent, useEffect, useState } from 'react';
 import AddIcon from '@material-ui/icons/Add';
 import TextField from '@material-ui/core/TextField';
 import { Grid, Typography } from '@material-ui/core';
@@ -14,8 +13,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import { useIncrementProducts } from '../../../context/IncrementProducts';
-import { useCheckout } from '../../../context/checkout';
+import { useIncrementProducts } from '../../../context/';
+import {ProductProps} from '../index'
 
 const schema = yup.object({
     name: yup.string().required('Esse campo é obrigatório.').min(2, 'O nome do produto precisa ter mais de uma letra'),
@@ -24,21 +23,9 @@ const schema = yup.object({
     //.positive('O preço precisa ser maior que zero.'),
 }).required('Esse campo é obrigatório.');
 
-interface ProductProps {
-    id: number;
-    name: string | null;
-    description: string;
-    price: number;
-    quantity: number;
-}
-
-interface ListProduct {
-    products: ProductProps[];
-}
-
 export function Admin() {
     const classes = useStyles();
-    const { register, handleSubmit, resetField, formState: { errors } } = useForm({ 
+    const { register, handleSubmit, formState: { errors } } = useForm({ 
         resolver: yupResolver(schema),
         defaultValues: {
             name: '',
@@ -54,10 +41,10 @@ export function Admin() {
         handleAddProduct,
         handleDelete} = useIncrementProducts()
 
-    const {
-        handleAddProductCheckout,
-        handleChangeQuantity
-    } = useCheckout();
+    // const {
+    //     handleAddProductCheckout,
+    //     handleChangeQuantity
+    // } = useCheckout();
     return (
         <>
             <Paper className={classes.paper}>
@@ -122,14 +109,14 @@ export function Admin() {
                     <TableBody>
                         {listProducts !== undefined &&
                         listProducts.map((product:ProductProps) => (
-                            <TableRow key={product.id}>
+                            <TableRow key={product._id}>
                                 <TableCell align="left">{product.name}</TableCell>
                                 <TableCell component="th" scope="row">
                                     {product.description}
                                 </TableCell>
                                 <TableCell align="left">{product.price}</TableCell>
                                 <TableCell /*className={classes.action}*/>
-                                    <Button variant="outlined" onClick={() => handleDelete(product.id)}>
+                                    <Button variant="outlined" onClick={() => handleDelete(product._id)}>
                                         <DeleteIcon />
                                     </Button>
                                 </TableCell>

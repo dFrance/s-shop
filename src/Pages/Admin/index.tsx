@@ -4,8 +4,8 @@ import { Grid, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/c
 import InboxIcon from '@material-ui/icons/Inbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import { useStyles } from "./styles";
-import { Admin } from "../../components/screens/Admin";
-import { History } from "../../components/screens/History";
+import { Admin, History } from "../../components/screens";
+// import { History } from "../../components/screens/History";
 
 export function AdminPage() {
     const [value, setValue] = useState(0);

@@ -12,26 +12,15 @@ import TextField from '@material-ui/core/TextField';
 import { Grid, Typography } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import { useCheckout } from '../../../context/checkout';
-import { useIncrementProducts } from '../../../context/IncrementProducts';
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css';
+import { useIncrementProducts } from '../../../context/';
 
-interface ProductProps {
-    quantity: number;
-    id: number;
-    name: string;
-    description: string;
-    price: number;
-    selected: boolean;
-}
+import {ProductProps} from '../index'
 
 export function Home() {
     const classes = useStyles();
     const [search, setSearch] = useState('');
     const {
         listProducts,
-        handleChangeQuantity,
         handleAddProductCheckout
     } = useIncrementProducts();
     const filterProducts = listProducts.filter((p:any) => p.name.toLowerCase().includes(search));
@@ -65,13 +54,13 @@ export function Home() {
                     <TableBody>
                         {listProducts !== undefined &&
                             filterProducts.map((product: ProductProps) => (
-                                <TableRow key={product.id}>
+                                <TableRow key={product._id}>
                                     <TableCell component="th" scope="row">
                                         {product.name}
                                     </TableCell>
                                     <TableCell align="left">{product.description}</TableCell>
                                     <TableCell className={classes.action}>
-                                        <Button disabled={product.selected} variant="outlined" color="primary" onClick={() => handleAddProductCheckout(product.id)}>
+                                        <Button variant="outlined" color="primary" onClick={() => handleAddProductCheckout(product._id)}>
                                             <AddIcon />
                                             1
                                         </Button>

@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { Grid, Typography } from '@material-ui/core';
 
 interface ProductProps {
-    id: number;
+    _id: number;
     product: string;
     description: string;
     price: number;
@@ -46,7 +46,7 @@ export function History() {
                     </TableHead>
                     <TableBody>
                         {history.map(h => (
-                            <TableRow key={h.id}>
+                            <TableRow key={h._id}>
                                 <TableCell component="th" scope="row">
                                     {h.product}
                                 </TableCell>
