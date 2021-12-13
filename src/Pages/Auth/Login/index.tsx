@@ -1,6 +1,6 @@
 import { Button, IconButton, InputAdornment, TextField } from "@material-ui/core";
 import { Header } from "../../../components/Header";
-import { ContainerAuth, Title } from "../style";
+import { ContainerAuth, SubtitleAuth, Title } from "../style";
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import { FormEvent, useState } from "react";
@@ -53,6 +53,7 @@ export function LoginPage() {
                         </InputAdornment>,
                     }} />
                 <Button type="submit" variant="contained" color="primary">Logar</Button>
+                <SubtitleAuth>Não possui conta? <a href="/register">Criar conta!</a></SubtitleAuth>
             </ContainerAuth>
         </>
     )

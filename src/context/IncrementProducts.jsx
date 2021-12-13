@@ -3,6 +3,7 @@ import { useCheckout } from './checkout';
 import { toast } from 'react-toastify'
 import axios from 'axios';
 import { useUserData } from './user';
+import { useHistory } from 'react-router';
 
 
 // interface ProductContext {
@@ -23,7 +24,8 @@ export const ProductContext = createContext();
 
 export const ProductProvider = ({children}) => {
     const {listCheckoutProducts, setListCheckoutProducts} = useCheckout();
-    const {userData} = useUserData()
+    const {userData, setUserData} = useUserData();
+    const history = useHistory();
     const [product, setProduct] = useState({});
     const [listProducts, setListProducts] = useState([])
       
@@ -95,14 +97,18 @@ export const ProductProvider = ({children}) => {
         setListProducts(filter)
         localStorage.setItem('products', JSON.stringify(filter))
     }
-    useEffect(() => {
-        // axios({method: 'get', url: 'http://localhost:8080/product'}).then((response) => setListProducts(response.data))
-        // axios({method: 'get', url: 'http://localhost:8080/product'})
-        if(userData){
-            axios({method: 'get', url: 'http://localhost:8080/product', headers: {'Authorization': 'Bearer ' + userData.token}})
-            .then((response) => console.log(response.data))
+    async function getProducts(){
+        try{
+            const request = await axios({method: 'get', url: 'http://localhost:8080/product'})
+            setUserData({...userData, logged: true})
+            setListProducts(request.data)
+        } catch(err) {
+            setUserData({...userData, logged: false})
         }
-    }, [userData])
+    }
+    useEffect(() => {
+        getProducts()
+    }, [])
     return (
         <ProductContext.Provider value={{
             product,

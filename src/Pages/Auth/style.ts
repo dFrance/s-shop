@@ -16,7 +16,14 @@ export const Title = styled.span`
     font-size: 24px;
     text-align: center;
     width: 100%;
-`;
+
+    `;
+
+export const SubtitleAuth = styled.span`
+    font-family: 'Roboto', Helvetica, sans-serif;
+    font-size: 14px;
+
+`
 
 export const ErrorMessage = styled.span`
     font-family: 'Roboto', Helvetica, sans-serif;

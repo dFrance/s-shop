@@ -1,6 +1,6 @@
 import { Button, IconButton, InputAdornment, TextField } from "@material-ui/core";
 import { Header } from "../../../components/Header";
-import { ContainerAuth, ErrorMessage, Title } from "../style";
+import { ContainerAuth, ErrorMessage, SubtitleAuth, Title } from "../style";
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import { FormEvent, useEffect, useState } from "react";
@@ -74,6 +74,7 @@ export function RegisterPage() {
                         </InputAdornment>,
                     }} />
                 <Button type="submit" variant="contained" color="primary">Criar conta</Button>
+                <SubtitleAuth>Já possui conta? <a href="/login">Login!</a></SubtitleAuth>
                 <ErrorMessage>
                     {messageResponse.message !== '' &&
                         messageResponse.message

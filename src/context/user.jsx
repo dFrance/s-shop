@@ -5,7 +5,7 @@ export const UserContext = createContext();
 
 
 export const UserProvider = ({children}) => {
-    const [userData, setUserData] = useState();
+    const [userData, setUserData] = useState({logged: false});
     useEffect(() => {
         if (!userData){
             const request = localStorage.getItem('user')

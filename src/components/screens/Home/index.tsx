@@ -15,6 +15,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import { useIncrementProducts } from '../../../context/';
 
 import {ProductProps} from '../index'
+import { useSelector } from 'react-redux';
 
 export function Home() {
     const classes = useStyles();
@@ -23,6 +24,9 @@ export function Home() {
         listProducts,
         handleAddProductCheckout
     } = useIncrementProducts();
+    console.log(listProducts)
+    const store = useSelector((state: any) => state.store)
+    console.log(store)
     const filterProducts = listProducts.filter((p:any) => p.name.toLowerCase().includes(search));
     return (
         <>
