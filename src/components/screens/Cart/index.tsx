@@ -10,17 +10,23 @@ import { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { Box, Grid, Typography } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { useIncrementProducts, useCheckout } from '../../../context/';
 import AddCircle from '@material-ui/icons/AddCircle';
 import RemoveCircle from '@material-ui/icons/RemoveCircle';
-import {ProductProps} from '../index'
+import { ProductProps } from '../index'
+import { useDispatch, useSelector } from 'react-redux';
+import { handleIncrementQuantity, handleDecrementQuantity, handleDeleteFromCheckout } from '../../../context/store';
+import { CheckoutProps } from '../../../context/interfacesRedux';
 
 export function Cart() {
     const classes = useStyles();
-    const { listCheckoutProducts, total, handleDelete } = useCheckout();
-    const { handleChangeQuantity } = useIncrementProducts();
+    const dispatch = useDispatch();
+    const {checkout} = useSelector((state: any) => state.store);
+
     const [name, setName] = useState('');
     const [error, setError] = useState({ error: false, message: '' });
+
+    const subTotal = checkout.map((p: CheckoutProps) => p.quantity > 1 ? p.price * p.quantity : p.price * 1)
+    const total = subTotal.reduce((acc: number, sum: number) => acc + sum, 0)
 
     // function buyProduct() {
     //     if (name.trim() !== '') {
@@ -32,7 +38,6 @@ export function Cart() {
     //         setError({ error: true, message: 'É preciso preencer seu nome!' })
     //     }
     // }
-
     return (
         <>
             <Paper className={classes.paper}>
@@ -63,16 +68,16 @@ export function Cart() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {listCheckoutProducts !== undefined &&
-                            listCheckoutProducts.map((product: ProductProps) => (
+                        {checkout[0].name !== undefined ?
+                            checkout.map((product: ProductProps) => (
                                 <TableRow key={product._id}>
                                     <TableCell align="center">
                                         <Box display="flex" style={{ gap: 16 }} justifyContent="center" alignItems="center">
-                                            <Button onClick={() => handleChangeQuantity(product._id, 'remove')} disabled={product.quantity < 2 && true} className={classes.buttonQuantity}>
+                                            <Button onClick={() => dispatch(handleDecrementQuantity(product._id))} disabled={product.quantity < 2 && true} className={classes.buttonQuantity}>
                                                 <RemoveCircle color={product.quantity < 2 ? 'disabled' : 'error'} />
                                             </Button>
                                             {product.quantity}
-                                            <Button onClick={() => handleChangeQuantity(product._id, 'add')}  className={classes.buttonQuantity}>
+                                            <Button onClick={() => dispatch(handleIncrementQuantity(product._id))} className={classes.buttonQuantity}>
                                                 <AddCircle color='primary' />
                                             </Button>
                                         </Box>
@@ -84,13 +89,25 @@ export function Cart() {
                                     <TableCell align="left">{product.price}</TableCell>
                                     <TableCell className={classes.action}>
                                         <Button variant="outlined"
-                                            onClick={() => handleDelete(product._id)}
+                                            onClick={() => dispatch(handleDeleteFromCheckout(product._id))}
                                         >
                                             <DeleteIcon />
                                         </Button>
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            ))
+                            :
+                            <TableRow>
+                                <TableCell align="center" />
+                                <TableCell align="center">
+                                    <Box display="flex" style={{ gap: 16 }} justifyContent="left" alignItems="center">
+                                        Adicione um produto no seu carrinho de compras!
+                                    </Box>
+                                </TableCell>
+                                <TableCell align="center" />
+                                <TableCell align="center" />
+                            </TableRow>
+                        }
                         <TableRow>
                             <TableCell />
                             <TableCell />

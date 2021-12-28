@@ -13,8 +13,11 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import { useIncrementProducts } from '../../../context/';
-import {ProductProps} from '../index'
+
+import { ProductProps } from '../index'
+import { useDispatch, useSelector } from 'react-redux';
+import { handleAddProduct, handleDelete } from '../../../context/store';
+import { useState } from 'react';
 
 const schema = yup.object({
     name: yup.string().required('Esse campo é obrigatório.').min(2, 'O nome do produto precisa ter mais de uma letra'),
@@ -23,32 +26,37 @@ const schema = yup.object({
     //.positive('O preço precisa ser maior que zero.'),
 }).required('Esse campo é obrigatório.');
 
+interface RegisterProduct {
+    name: string,
+    description: string,
+    price: number,
+}
+
 export function Admin() {
     const classes = useStyles();
-    const { register, handleSubmit, formState: { errors } } = useForm({ 
+    const dispatch = useDispatch();
+    const { products } = useSelector((state: any) => state.store)
+    const [product, setProduct] = useState<RegisterProduct>({ name: '', description: '', price: 0 });
+    
+    const data = {
+        name: product.name,
+        description: product.description,
+        price: product.price,
+    }
+
+    const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
             name: '',
             description: '',
             price: 0,
-          }
+        }
     });
-    
-    const {
-        product, 
-        setProduct, 
-        listProducts, 
-        handleAddProduct,
-        handleDelete} = useIncrementProducts()
 
-    // const {
-    //     handleAddProductCheckout,
-    //     handleChangeQuantity
-    // } = useCheckout();
     return (
         <>
             <Paper className={classes.paper}>
-                <form onSubmit={handleSubmit(handleAddProduct)}>
+                <form onSubmit={handleSubmit(() => dispatch(handleAddProduct(data)))}>
                     <Grid container spacing={2} className={classes.header}>
                         <Grid item xs={12} style={{ marginBottom: 16 }}>
                             <Typography>Admin / Produtos </Typography>
@@ -107,21 +115,21 @@ export function Admin() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {listProducts !== undefined &&
-                        listProducts.map((product:ProductProps) => (
-                            <TableRow key={product._id}>
-                                <TableCell align="left">{product.name}</TableCell>
-                                <TableCell component="th" scope="row">
-                                    {product.description}
-                                </TableCell>
-                                <TableCell align="left">{product.price}</TableCell>
-                                <TableCell /*className={classes.action}*/>
-                                    <Button variant="outlined" onClick={() => handleDelete(product._id)}>
-                                        <DeleteIcon />
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                        {products !== undefined &&
+                            products.map((product: ProductProps) => (
+                                <TableRow key={product._id}>
+                                    <TableCell align="left">{product.name}</TableCell>
+                                    <TableCell component="th" scope="row">
+                                        {product.description}
+                                    </TableCell>
+                                    <TableCell align="left">{product.price}</TableCell>
+                                    <TableCell /*className={classes.action}*/>
+                                        <Button variant="outlined" onClick={() => dispatch(handleDelete(product._id))}>
+                                            <DeleteIcon />
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
                     </TableBody>
                 </Table>
             </Paper>

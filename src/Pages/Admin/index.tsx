@@ -1,15 +1,24 @@
 import { Header } from "../../components/Header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Grid, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import InboxIcon from '@material-ui/icons/Inbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import { useStyles } from "./styles";
 import { Admin, History } from "../../components/screens";
+import { useDispatch } from "react-redux";
+import { getCheckoutAlreadyExist, getProductsAlreadyRegister } from "../../context/store";
 // import { History } from "../../components/screens/History";
 
 export function AdminPage() {
     const [value, setValue] = useState(0);
     const classes = useStyles();
+    const dispatch = useDispatch();
+    
+    useEffect(() => {
+        dispatch(getProductsAlreadyRegister())
+        dispatch(getCheckoutAlreadyExist())
+    }, [])
+
     return (
         <>
             <Header />

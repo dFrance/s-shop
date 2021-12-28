@@ -12,22 +12,32 @@ import TextField from '@material-ui/core/TextField';
 import { Grid, Typography } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import { useIncrementProducts } from '../../../context/';
 
-import {ProductProps} from '../index'
-import { useSelector } from 'react-redux';
+import {handleAddProductCheckout} from '../../../context/store'
+
+import { useDispatch, useSelector } from 'react-redux';
+
+import { ProductProps } from '../../../context/interfacesRedux'
 
 export function Home() {
     const classes = useStyles();
     const [search, setSearch] = useState('');
-    const {
-        listProducts,
-        handleAddProductCheckout
-    } = useIncrementProducts();
-    console.log(listProducts)
-    const store = useSelector((state: any) => state.store)
-    console.log(store)
-    const filterProducts = listProducts.filter((p:any) => p.name.toLowerCase().includes(search));
+    const dispatch = useDispatch();
+    const {products} = useSelector((state: any) => state.store)
+    const [filterProducts, setFilterProducts] = useState([])
+
+    useEffect(() => {
+        if (products[0].name){
+            setFilterProducts(products)
+        }
+    }, [products])
+    useEffect(() => {
+        if (products[0].name){
+            const filter = products.filter((p : ProductProps) => p.name.toLowerCase().includes(search));
+            setFilterProducts(filter)
+        }
+     }, [search])
+
     return (
         <>
             <Paper className={classes.paper}>
@@ -56,7 +66,7 @@ export function Home() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {listProducts !== undefined &&
+                        {products !== undefined &&
                             filterProducts.map((product: ProductProps) => (
                                 <TableRow key={product._id}>
                                     <TableCell component="th" scope="row">
@@ -64,7 +74,7 @@ export function Home() {
                                     </TableCell>
                                     <TableCell align="left">{product.description}</TableCell>
                                     <TableCell className={classes.action}>
-                                        <Button variant="outlined" color="primary" onClick={() => handleAddProductCheckout(product._id)}>
+                                        <Button variant="outlined" color="primary" onClick={() => dispatch(handleAddProductCheckout(product._id))}>
                                             <AddIcon />
                                             1
                                         </Button>

@@ -4,27 +4,35 @@ import { Grid, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/c
 import InboxIcon from '@material-ui/icons/Inbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import { useStyles } from "./styles";
-// import { Home } from "../../components/screens/Home";
 import { Cart, Home } from "../../components/screens/";
-import { useCheckout } from "../../context/checkout";
 import { useHistory } from "react-router";
 import { useUserData } from "../../context/user";
+import { useDispatch, useSelector } from "react-redux";
+import { getCheckoutAlreadyExist, getProductsAlreadyRegister } from "../../context/store";
 
 export function UserPage() {
     const [value, setValue] = useState(0);
-    const {userData} = useUserData();
-    const { listCheckoutProducts } = useCheckout()
+    const [viewCheckout, setViewCheckout] = useState(false)
     const history = useHistory();
     const classes = useStyles();
     
-    useEffect(() => {
-        if(userData.logged)
-            goToLogin()
-    }, [])
-
-    function goToLogin(){
+    const dispatch = useDispatch();
+    const { checkout } = useSelector((state: any) => state.store);
+    
+    function goToLogin() {
         history.push('/login')
     }
+
+    useEffect(() => {
+        dispatch(getProductsAlreadyRegister())
+        dispatch(getCheckoutAlreadyExist())
+    }, [])
+
+    useEffect(() => {
+        if (checkout[0].name !== null) {
+            setViewCheckout(true)
+        }
+    }, [checkout])
     return (
         <>
             <Header />
@@ -42,9 +50,11 @@ export function UserPage() {
                                 <DraftsIcon />
                             </ListItemIcon>
                             <ListItemText primary="Carrinho" />
-                            <span className={classes.howManyItems}>
-                                {listCheckoutProducts[0]?.name !== '' ? listCheckoutProducts.length : ''}
-                            </span>
+                            {viewCheckout &&
+                                <span className={classes.howManyItems}>
+                                    {checkout.length}
+                                </span>
+                            }
                         </ListItem>
                         <ListItem button onClick={goToLogin}>
                             <ListItemIcon>
