@@ -2,28 +2,44 @@ import { createSlice, createAsyncThunk, current } from '@reduxjs/toolkit'
 import { toast } from 'react-toastify'
 import axios from 'axios';
 import { StoreProps } from './interfacesRedux';
+import { useSelector } from 'react-redux';
 
 export const initialState = {
     products: [{}], checkout: [{ name: null }], user: {}
-} /*as StoreProps*/;
+};
 
 export const getProductsAlreadyRegister = createAsyncThunk(
     'request/getProductsAlreadyRegister',
-    async () => {
+    async (_,thunkAPI) => {
+        console.log(thunkAPI)
+        console.log(thunkAPI.getState())
+        const request = await axios({ method: 'get', url: 'http://localhost:8080/product' })
+        return request.data
+    }
+)
+export const handleDeleteProduct = createAsyncThunk(
+    'request/handleDeleteProduct',
+    async (_,thunkAPI) => {
+        console.log(thunkAPI)
+        console.log(thunkAPI.getState())
         const request = await axios({ method: 'get', url: 'http://localhost:8080/product' })
         return request.data
     }
 )
 
-export const handleDelete = (product_id) => (
-    async () => {
-        console.log(product_id)
-        const newProducts = [...product_id];
-        const filter = newProducts.filter(p => p._id !== product_id)
-        let state = filter
-        localStorage.setItem('products', JSON.stringify(filter))
-        const request = await axios({ method: 'get', url: 'http://localhost:8080/product' })
-        return request.data
+export const handleDelete = (productId) => (
+    async () =>
+    {
+        const data = {_id: productId}
+        console.log('entrou')
+        try {
+            await axios({ method: 'delete', url: 'http://localhost:8080/product', data })
+            toast.success('Produto excluído com sucesso!')
+        } catch {
+            toast.success('Erro ao excluir!')
+
+        }
+        // console.log(request.data)
     }
 )
 
@@ -78,6 +94,7 @@ export const store = createSlice({
         },
 
         handleDeleteProduct(state, action) {
+            console.log('entrou')
             const newProducts = [...state.products];
             const filter = newProducts.filter(p => p._id !== action.payload)
             state.products = filter
@@ -129,6 +146,16 @@ export const store = createSlice({
         },
         [getProductsAlreadyRegister.rejected]: (state, action) => {
             state.status = 'failed'
+        },
+        [handleDeleteProduct.pending]: (state, action) => {
+            state.status = 'loading'
+        },
+        [handleDeleteProduct.fulfilled]: (state, action) => {
+            state.products = action.payload
+            state.status = 'success'
+        },
+        [handleDeleteProduct.rejected]: (state, action) => {
+            state.status = 'failed'
         }
     }
 })
@@ -139,7 +166,7 @@ export const {
     handleDecrementQuantity,
     handleAddProductCheckout,
     getCheckoutAlreadyExist,
-    handleDeleteProduct,
+    // handleDeleteProduct,
     handleDeleteFromCheckout,
 } = store.actions
 
