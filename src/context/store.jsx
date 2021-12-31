@@ -3,6 +3,7 @@ import { toast } from 'react-toastify'
 import axios from 'axios';
 import { StoreProps } from './interfacesRedux';
 import { useSelector } from 'react-redux';
+import requestApi from '../services/requestApi';
 
 export const initialState = {
     products: [{}], checkout: [{ name: null }], user: {}
@@ -13,33 +14,23 @@ export const getProductsAlreadyRegister = createAsyncThunk(
     async (_,thunkAPI) => {
         console.log(thunkAPI)
         console.log(thunkAPI.getState())
-        const request = await axios({ method: 'get', url: 'http://localhost:8080/product' })
+        const request = await requestApi.get('product')
         return request.data
     }
 )
-export const handleDeleteProduct = createAsyncThunk(
-    'request/handleDeleteProduct',
-    async (_,thunkAPI) => {
-        console.log(thunkAPI)
-        console.log(thunkAPI.getState())
-        const request = await axios({ method: 'get', url: 'http://localhost:8080/product' })
-        return request.data
-    }
-)
+
 
 export const handleDelete = (productId) => (
     async () =>
     {
         const data = {_id: productId}
-        console.log('entrou')
         try {
-            await axios({ method: 'delete', url: 'http://localhost:8080/product', data })
+            await requestApi.delete('product', data)
             toast.success('Produto excluído com sucesso!')
         } catch {
             toast.success('Erro ao excluir!')
 
         }
-        // console.log(request.data)
     }
 )
 
@@ -49,30 +40,30 @@ export const store = createSlice({
     name: 'store',
     initialState,
     reducers: {
-        handleAddProduct(state, action) {
-            const data = {
-                name: action.payload.name,
-                description: action.payload.description,
-                price: action.payload.price,
-                quantity: 1,
-                selected: false,
-                id: +new Date(),
-            }
-            axios({
-                method: 'post',
-                url: 'http://localhost:8080/product',
-                data,
-                // headers: { 'bearer': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxOWQ0ZjExMzY2MzczMGEyOTVlNTZlYSIsImlhdCI6MTYzNzcyMDQ1MSwiZXhwIjoxNjM3ODA2ODUxfQ.4e8Eawd0p4-1t0bBsORtlkbqLMlocnhDMle7RvESoZI' } 
-            }).then(() => {
-                const newListProduct = ([...state.products, data])
-                localStorage.setItem('products', JSON.stringify(newListProduct))
-                state.products = newListProduct
-                toast.success('Produto cadastrado!')
-            }).catch((err) => {
-                console.log(err)
-                toast.error('Erro ao cadastrar o produto.')
-            })
-        },
+        // handleAddProduct(state, action) {
+        //     const data = {
+        //         name: action.payload.name,
+        //         description: action.payload.description,
+        //         price: action.payload.price,
+        //         quantity: 1,
+        //         selected: false,
+        //         id: +new Date(),
+        //     }
+        //     axios({
+        //         method: 'post',
+        //         url: 'http://localhost:8080/product',
+        //         data,
+        //         // headers: { 'bearer': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxOWQ0ZjExMzY2MzczMGEyOTVlNTZlYSIsImlhdCI6MTYzNzcyMDQ1MSwiZXhwIjoxNjM3ODA2ODUxfQ.4e8Eawd0p4-1t0bBsORtlkbqLMlocnhDMle7RvESoZI' } 
+        //     }).then(() => {
+        //         const newListProduct = ([...state.products, data])
+        //         localStorage.setItem('products', JSON.stringify(newListProduct))
+        //         state.products = newListProduct
+        //         toast.success('Produto cadastrado!')
+        //     }).catch((err) => {
+        //         console.log(err)
+        //         toast.error('Erro ao cadastrar o produto.')
+        //     })
+        // },
 
         handleIncrementQuantity(state, action) {
             const count = state.checkout.map(p => p._id === action.payload ? { ...p, quantity: p.quantity + 1 } : { ...p });
@@ -147,16 +138,6 @@ export const store = createSlice({
         [getProductsAlreadyRegister.rejected]: (state, action) => {
             state.status = 'failed'
         },
-        [handleDeleteProduct.pending]: (state, action) => {
-            state.status = 'loading'
-        },
-        [handleDeleteProduct.fulfilled]: (state, action) => {
-            state.products = action.payload
-            state.status = 'success'
-        },
-        [handleDeleteProduct.rejected]: (state, action) => {
-            state.status = 'failed'
-        }
     }
 })
 
@@ -166,7 +147,6 @@ export const {
     handleDecrementQuantity,
     handleAddProductCheckout,
     getCheckoutAlreadyExist,
-    // handleDeleteProduct,
     handleDeleteFromCheckout,
 } = store.actions
 

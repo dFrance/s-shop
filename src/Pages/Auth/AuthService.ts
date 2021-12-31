@@ -1,5 +1,6 @@
 import axios from "axios";
 import { FormEvent } from "react";
+import requestApi from "../../services/requestApi";
 
 export interface UserLoginProps {
     email: string;
@@ -26,13 +27,13 @@ export interface UserRegisterProps {
 
 export async function AuthApi(e: FormEvent, data: UserLoginProps, setData: any){
     e.preventDefault();
-    await axios({method: 'post', url: `http://localhost:8080/Login`, data})
+    await requestApi.post('/Login', data)
     .then((response) => setData(response.data))
 }
 
 export async function RegisterApi(e: FormEvent, data: UserRegisterProps, setMessageResponse: any) {
     e.preventDefault();
-    await axios({ method: 'post', url: "http://localhost:8080/user/novo", data })
+    await requestApi.post('/user/novo', data)
         .then((response) => setMessageResponse(response.data))
         .catch((err) => setMessageResponse(err.response.data))
 }
